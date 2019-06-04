@@ -1,0 +1,40 @@
+kops create cluster \
+--node-count=2 \
+--master-size=t2.micro \
+--node-size=t2.micro \
+--zones=us-east-1a \
+--name=${KOPS_CLUSTER_NAME}
+
+kops create cluster --node-count=2 --master-size=t2.micro --node-size=t2.micro --zones=us-east-1a --name=${KOPS_CLUSTER_NAME} --yes
+
+kops create cluster \
+    --name=kubernetes.k8s-planetx.xyz \
+    --state=s3://kops-planetx \
+    --zones=us-east-1a \
+    --master-size=t2.micro \
+    --node-size=t2.micro \
+    --node-count=2 \
+    --dns-zone=kubernetes.k8s-planetx.xyz
+
+Suggestions:
+ * validate cluster: kops validate cluster
+ * list nodes: kubectl get nodes --show-labels
+ * ssh to the master: ssh -i ~/.ssh/id_rsa admin@api.kubernetes.k8s-planetx.xyz
+ * the admin user is specific to Debian. If not using Debian please use the appropriate user based on your OS.
+ * read about installing addons at: https://github.com/kubernetes/kops/blob/master/docs/addons.md.
+
+Multi Zone Cluster:
+
+$ kops create cluster \
+       --state "s3://kubernetes.k8s-planetx.xyz" \
+       --zones "us-east-1d,us-east-1f"  \
+       --master-count 1 \
+       --master-size=t2.micro \
+       --node-count 2 \
+       --node-size=t2.micro \
+       --name kubernetes.k8s-planetx.xyz \
+       --dns-zone=kubernetes.k8s-planetx.xyz \
+       --yes
+
+
+       --set global.hosts.domain=kubernetes.k8s-planetx.xyz \
